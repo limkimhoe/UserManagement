@@ -1,34 +1,36 @@
+import { describe, expect, test } from '@jest/globals';
 const request = require('supertest');
-const app = require('../src/app'); // Adjust the path according to your project structure
+const app = require('../server'); // Adjust the path according to your project structure
+require('dotenv').config();
 
-describe('User CRUD Operations', () => {
-  let newUser;
+describe('UserCRUD', () => {
+  let newUser: any;
 
   // Create User
-  it('should create a new user', async () => {
-    const userData = {
-      username: 'testuser',
-      email: 'test@example.com',
-      // include any other required fields from the user entity
+  test('should create a new user', async () => {
+    const userData = {  
+      "username": "testuser",
+      "email": "test@example.com"
     };
-    
+   
     const res = await request(app)
       .post('/api/users')
-      .send(userData);
+      .send({ username: 'testuser', email: 'test@example.com' })
+      .set('Content-Type', 'application/json');
     expect(res.statusCode).toEqual(201);
     expect(res.body).toHaveProperty('user_id');
     newUser = res.body;
   });
 
   // Read User
-  it('should retrieve a user by ID', async () => {
+  test('should retrieve a user by ID', async () => {
     const res = await request(app).get(`/api/users/${newUser.user_id}`);
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('user_id', newUser.user_id);
   });
 
   // Update User
-  it('should update a user', async () => {
+  test('should update a user', async () => {
     const updatedData = {
       username: 'updateduser',
       email: 'update@example.com',
@@ -43,21 +45,18 @@ describe('User CRUD Operations', () => {
   });
 
   // Delete User
-  it('should delete a user', async () => {
+  test('should delete a user', async () => {
     const res = await request(app).delete(`/api/users/${newUser.user_id}`);
     expect(res.statusCode).toEqual(200);
     expect(res.text).toContain('User deleted successfully'); // Adjust based on your actual delete response
   });
 
   // List Users
-  it('should list all users', async () => {
+  test('should list all users', async () => {
     const res = await request(app).get('/api/users');
     expect(res.statusCode).toEqual(200);
     expect(Array.isArray(res.body)).toBeTruthy();
   });
 
-  // After all tests are done, you may want to clean up the test data
-  afterAll(async () => {
-    // Perform cleanup if necessary
-  });
+
 });

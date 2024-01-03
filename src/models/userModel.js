@@ -1,11 +1,17 @@
 const pool = require('../config/db_config');
 
 const createUser = async (username, email) => {
-  const result = await pool.query(
-    'INSERT INTO um_user (username, email, created_at, updated_at) VALUES ($1, $2, NOW(), NOW()) RETURNING *;',
-    [username, email]
-  );
-  return result.rows[0];
+  console.log(`Model: ${username}, ${email}`);
+  try {
+    const result = await pool.query(
+      'INSERT INTO um_user (username, email, created_at, updated_at) VALUES ($1, $2, NOW(), NOW()) RETURNING *;',
+      [username, email]
+    );
+
+    return result.rows[0];
+  } catch (error) {
+    console.error("Query error:", error);
+  }
 };
 
 const getAllUsers = async () => {

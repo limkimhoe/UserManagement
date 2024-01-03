@@ -3,7 +3,9 @@ const userModel = require('../models/userModel');
 const createUser = async (req, res) => {
   try {
     const { username, email } = req.body;
-    console.log(`${username}, ${email}`);
+
+    console.log(`Controller: ${username}, ${email}`);
+    
     const newUser = await userModel.createUser(username, email);
     res.status(201).json(newUser);
   } catch (error) {
