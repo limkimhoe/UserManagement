@@ -1,5 +1,25 @@
 const pool = require('../config/db_config');
 
+const roleCheck = async (userId) =>{
+  const query = `
+      SELECT r.role_name
+      FROM um_user u
+      JOIN um_user_role ur ON u.user_id = ur.user_id
+      JOIN um_role r ON ur.role_id = r.role_id
+      WHERE u.user_id = $1;
+    `;
+
+  try{
+    const result = await pool.query(query, [userId]);
+    return result.rows[0]?.role_name;
+
+  }catch (error) {
+    // Handle or log the error
+    console.error('Error in assignRoleFromSignUp:', error);
+    throw error; // Rethrow the error if you want to handle it further up the call stack
+  }
+}
+
 const createRole = async (roleName, roleDescription) => {
 
     try {
@@ -48,5 +68,6 @@ module.exports = {
   getRoleById,
   updateRole,
   deleteRole,
-  assignRole
+  assignRole,
+  roleCheck
 };

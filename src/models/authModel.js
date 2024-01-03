@@ -23,6 +23,7 @@ const findUserByAuth = async (username) => {
 };
 
 const comparePassword = async (inputPassword, storedPassword) => {
+  console.log(inputPassword, storedPassword);
   return bcrypt.compare(inputPassword, storedPassword);
 };
 

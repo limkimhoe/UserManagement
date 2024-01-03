@@ -6,6 +6,7 @@ const { createUserFromSignUp } = require('./userController');
 const signIn = async (req, res) => {
   try {
     const { username, password } = req.body;
+    console.log(`Controller: ${username}, ${password}`);
     const userAuth = await authModel.findUserByAuth(username);
 
     if (!userAuth || !(await authModel.comparePassword(password, userAuth.password_hash))) {
@@ -18,12 +19,15 @@ const signIn = async (req, res) => {
       { expiresIn: '1h' }
     );
 
+    console.log(token);
+
     const expirationTime = new Date();
     expirationTime.setHours(expirationTime.getHours() + 1);
 
     await authModel.createSession(userAuth.user_id, token, expirationTime);
 
-    res.json({ token });
+    res.json({ token, "user_id": userAuth.user_id });
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -32,7 +36,7 @@ const signIn = async (req, res) => {
 const signUp = async (req, res) => {
   try {
     const { username, email, password, auth_type, oauth_id} = req.body;
-    console.log(`${username}, ${email}, ${password}, ${auth_type}, ${oauth_id}`);
+    //console.log(`${username}, ${email}, ${password}, ${auth_type}, ${oauth_id}`);
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await createUserFromSignUp(username, email); 
     console.log(`${newUser.user_id}`);

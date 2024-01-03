@@ -1,14 +1,13 @@
 const userModel = require('../models/userModel');
-const roleModel = require('../models/roleModel');
+const { assignRoleFromSignUp } = require('./roleController');
 
 const createUserFromSignUp = async (username, email) => {
   try {
 
-    console.log(`Controller: ${username}, ${email}`);
-    
+    //console.log(`Controller: ${username}, ${email}`);
     const newUser = await userModel.createUser(username, email);
-    const assignRole = await roleModel.assignRole(newUser.user_id, 3);
-    if(assignRole){
+    const assignedUserRole = await assignRoleFromSignUp(newUser.user_id, 3);
+    if(assignedUserRole){
       return newUser;
     }
     
@@ -23,11 +22,10 @@ const createUser = async (req, res) => {
   try {
     const { username, email } = req.body;
 
-    console.log(`Controller: ${username}, ${email}`);
-    
+    //console.log(`Controller: ${username}, ${email}`);
     const newUser = await userModel.createUser(username, email);
-    const assignRole = await roleModel.assignRole(newUser.user_id, 3);
-    if(assignRole){
+    const assignedUserRole = await assignRoleFromSignUp(newUser.user_id, 3);
+    if(assignedUserRole){
       res.status(201).json(newUser);
     }
     
