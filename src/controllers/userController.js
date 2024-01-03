@@ -1,4 +1,23 @@
 const userModel = require('../models/userModel');
+const roleModel = require('../models/roleModel');
+
+const createUserFromSignUp = async (username, email) => {
+  try {
+
+    console.log(`Controller: ${username}, ${email}`);
+    
+    const newUser = await userModel.createUser(username, email);
+    const assignRole = await roleModel.assignRole(newUser.user_id, 3);
+    if(assignRole){
+      return newUser;
+    }
+    
+  } catch (error) {
+    // Handle or log the error
+    console.error('Error in createUser:', error);
+    throw error; // Rethrow the error if you want to handle it further up the call stack
+  }
+};
 
 const createUser = async (req, res) => {
   try {
@@ -7,7 +26,11 @@ const createUser = async (req, res) => {
     console.log(`Controller: ${username}, ${email}`);
     
     const newUser = await userModel.createUser(username, email);
-    res.status(201).json(newUser);
+    const assignRole = await roleModel.assignRole(newUser.user_id, 3);
+    if(assignRole){
+      res.status(201).json(newUser);
+    }
+    
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -64,5 +87,6 @@ module.exports = {
   getAllUsers,
   getUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  createUserFromSignUp
 };

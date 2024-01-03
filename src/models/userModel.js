@@ -1,8 +1,8 @@
 const pool = require('../config/db_config');
 
-const createUser = async (username, email) => {
-  console.log(`Model: ${username}, ${email}`);
-  try {
+const createUser = async (username, email, password, authType) => {
+
+    try {
     const result = await pool.query(
       'INSERT INTO um_user (username, email, created_at, updated_at) VALUES ($1, $2, NOW(), NOW()) RETURNING *;',
       [username, email]

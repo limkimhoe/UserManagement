@@ -1,7 +1,9 @@
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const authModel = require('../models/authModel');
+const { createUserFromSignUp } = require('./userController'); 
 
-const loginUser = async (req, res) => {
+const signIn = async (req, res) => {
   try {
     const { username, password } = req.body;
     const userAuth = await authModel.findUserByAuth(username);
@@ -27,6 +29,22 @@ const loginUser = async (req, res) => {
   }
 };
 
+const signUp = async (req, res) => {
+  try {
+    const { username, email, password, auth_type, oauth_id} = req.body;
+    console.log(`${username}, ${email}, ${password}, ${auth_type}, ${oauth_id}`);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await createUserFromSignUp(username, email); 
+    console.log(`${newUser.user_id}`);
+    const authEntry = await authModel.createAuthEntry(newUser.user_id, auth_type, username, hashedPassword, oauth_id, "JWTtoken");
+    const combinedUserData = { ...newUser, ...authEntry };
+    res.status(201).json(combinedUserData);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
-  loginUser
+  signIn,
+  signUp
 };
