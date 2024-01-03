@@ -4,6 +4,7 @@ const path = require('path');
 const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
+const roleRoutes = require('./routes/roleRoutes');
 const mainRoutes = require('./routes/mainRoutes');
 
 const app = express();
@@ -17,6 +18,9 @@ app.use(express.static(path.join(__dirname, '..', 'views')));
 
 // Define the route for users
 app.use('/api/users', userRoutes);
+
+// Define the route for users
+app.use('/api/roles', roleRoutes);
 
 // Define the route for authentication
 app.use('/api/auth', authRoutes);

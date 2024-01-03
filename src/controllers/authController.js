@@ -19,7 +19,7 @@ const signIn = async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    console.log(token);
+    //console.log(token);
 
     const expirationTime = new Date();
     expirationTime.setHours(expirationTime.getHours() + 1);
@@ -39,7 +39,7 @@ const signUp = async (req, res) => {
     //console.log(`${username}, ${email}, ${password}, ${auth_type}, ${oauth_id}`);
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await createUserFromSignUp(username, email); 
-    console.log(`${newUser.user_id}`);
+    //console.log(`${newUser.user_id}`);
     const authEntry = await authModel.createAuthEntry(newUser.user_id, auth_type, username, hashedPassword, oauth_id, "JWTtoken");
     const combinedUserData = { ...newUser, ...authEntry };
     res.status(201).json(combinedUserData);
@@ -48,7 +48,20 @@ const signUp = async (req, res) => {
   }
 };
 
+const deleteAuthEntry = async (req, res) => {
+  try {
+    const deletedAuthEntry = await authModel.deleteAuthEntry(req.params.id);
+    if (!deletedAuthEntry) {
+      return res.status(404).json({ message: 'authEntry not found' });
+    }
+    res.json({ message: 'Authentication Entry deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   signIn,
-  signUp
+  signUp,
+  deleteAuthEntry
 };

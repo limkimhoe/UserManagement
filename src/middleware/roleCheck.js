@@ -6,8 +6,8 @@ const roleCheck = (requiredRole) => {
         try {
             //console.log(userId)
             const userRole = await roleModel.roleCheck(userId);
-            console.log(`User role: ${userRole}`);
-            if (userRole === requiredRole) {
+            console.log(`User role: ${userRole}, ${requiredRole}`);
+            if (userRole <= requiredRole) {
                 next();
             } else {
                 res.status(403).json({ message: "Access denied" });

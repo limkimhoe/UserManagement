@@ -2,7 +2,7 @@ const pool = require('../config/db_config');
 
 const roleCheck = async (userId) =>{
   const query = `
-      SELECT r.role_name
+      SELECT r.role_id
       FROM um_user u
       JOIN um_user_role ur ON u.user_id = ur.user_id
       JOIN um_role r ON ur.role_id = r.role_id
@@ -11,7 +11,7 @@ const roleCheck = async (userId) =>{
 
   try{
     const result = await pool.query(query, [userId]);
-    return result.rows[0]?.role_name;
+    return result.rows[0]?.role_id;
 
   }catch (error) {
     // Handle or log the error
@@ -39,8 +39,14 @@ const getAllRoles = async () => {
   return result.rows;
 };
 
-const getRoleById = async (roleId) => {
+const getRoleById = async (userId) => {
   const result = await pool.query('SELECT * FROM um_role WHERE role_id = $1;', [roleId]);
+  return result.rows[0];
+};
+
+
+const getRoleByUserId = async (userId) => {
+  const result = await pool.query('SELECT * FROM um_user_role WHERE user_id = $1;', [userId]);
   return result.rows[0];
 };
 
@@ -58,16 +64,25 @@ const deleteRole = async (roleId) => {
 };
 
 const assignRole = async (userId, roleId) => {
+  //console.log(`Model: ${userId}, ${roleId}`);
   const result = await pool.query("INSERT INTO um_user_role (user_id, role_id) VALUES ($1, $2) RETURNING *;", [userId, roleId]);
   return result.rows[0];
 }
+
+const deleteUserRole = async (userId) => {
+  const result = await pool.query('DELETE FROM um_user_role WHERE user_id = $1 RETURNING *;', [userId]);
+  return result.rows[0];
+};
+
 
 module.exports = {
   createRole,
   getAllRoles,
   getRoleById,
+  getRoleByUserId,
   updateRole,
   deleteRole,
   assignRole,
+  deleteUserRole,
   roleCheck
 };

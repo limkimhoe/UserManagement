@@ -8,7 +8,8 @@
     "dev": "nodemon server.js",
     "eslint": "eslint . --ext .js,.ts",
     "userCRUD": "jest UserCRUD",
-    "environmentVariable": "jest environmentVariable"
+    "environmentVariable": "jest environmentVariable",
+    "userSignUp": "jest userSignUp --detectOpenHandles"
   },
   "keywords": [],
   "author": "Kim Hoe",

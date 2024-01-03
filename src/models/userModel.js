@@ -37,6 +37,7 @@ const deleteUser = async (userId) => {
   return result.rows[0];
 };
 
+
 module.exports = {
   createUser,
   getAllUsers,

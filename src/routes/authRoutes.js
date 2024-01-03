@@ -4,5 +4,6 @@ const router = express.Router();
 
 router.post('/signin', authController.signIn);
 router.post('/signup', authController.signUp);
+router.delete('/:id', authController.deleteAuthEntry);
 
 module.exports = router;

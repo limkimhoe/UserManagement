@@ -5,7 +5,7 @@ const authenticateToken = require('../middleware/authenticate'); // Import the m
 const router = express.Router();
 
 router.post('/', userController.createUser);
-router.get('/', authenticateToken, roleCheck('siteAdmin'), userController.getAllUsers);
+router.get('/', authenticateToken, roleCheck(2), userController.getAllUsers);
 router.get('/:id', userController.getUser);
 router.put('/:id', userController.updateUser);
 router.delete('/:id', userController.deleteUser);

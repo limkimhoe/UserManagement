@@ -13,11 +13,12 @@ const assignRoleFromSignUp = async (userId, roleId) => {
   }
 };
 
-const assignRole = async (req, res) => {
+const assignUserRole = async (req, res) => {
   try {
     const { userId, roleId } = req.body;
-    const assignedRole = await roleModel.assignRole(userId, roleId);
-    res.status(201).json(assignedRole);
+    //console.log(`Controller: ${userId}, ${roleId}`);
+    const assignedUserRole = await roleModel.assignRole(userId, roleId);
+    res.status(201).json(assignedUserRole);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -56,6 +57,18 @@ const getRole = async (req, res) => {
   }
 };
 
+const getRoleByUser = async (req, res) => {
+  try {
+    const role = await roleModel.getRoleByUserId(req.params.id);
+    if (!role) {
+      return res.status(404).json({ message: 'Role not found' });
+    }
+    res.json(role);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const updateRole = async (req, res) => {
   try {
     const { roleName, roleDescription } = req.body;
@@ -81,12 +94,26 @@ const deleteRole = async (req, res) => {
   }
 };
 
+const deleteUserRole = async (req, res) => {
+  try {
+    const deletedUserRole = await roleModel.deleteUserRole(req.params.id);
+    if (!deletedUserRole) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ message: 'User Role deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createRole,
   getAllRoles,
   getRole,
+  getRoleByUser,
   updateRole,
   deleteRole,
-  assignRole,
+  assignUserRole,
+  deleteUserRole,
   assignRoleFromSignUp
 };

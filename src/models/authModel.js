@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const pool = require('../config/db_config');
 
 const createAuthEntry = async (userId, authType, username, passwordHash, oauthId, token) => {
+  //console.log(`${userId}, ${authType}, ${username}, ${passwordHash}, ${oauthId}, ${token}`)
   const result = await pool.query(
     'INSERT INTO um_authentication (user_id, auth_type, username, password_hash, oauth_id, token, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW()) RETURNING *;',
     [userId, authType, username, passwordHash, oauthId, token]
@@ -27,9 +28,15 @@ const comparePassword = async (inputPassword, storedPassword) => {
   return bcrypt.compare(inputPassword, storedPassword);
 };
 
+const deleteAuthEntry = async (authId) => {
+  const result = await pool.query('DELETE FROM um_authentication WHERE auth_id = $1 RETURNING *;', [authId]);
+  return result.rows[0];
+};
+
 module.exports = {
   createAuthEntry,
   createSession,
   findUserByAuth,
-  comparePassword
+  comparePassword,
+  deleteAuthEntry
 };
