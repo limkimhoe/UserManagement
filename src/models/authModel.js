@@ -19,12 +19,19 @@ const createSession = async (userId, token, expirationTime) => {
 };
 
 const findUserByAuth = async (username) => {
-  const result = await pool.query('SELECT * FROM um_authentication WHERE username = $1;', [username]);
+  const query = `
+  SELECT a.*, r.role_name, r.role_id  FROM um_authentication a
+  JOIN um_user u ON a.user_id = u.user_id 
+  JOIN um_user_role ur ON u.user_id = ur.user_id 
+  JOIN um_role r ON ur.role_id = r.role_id 
+  WHERE u.username = $1;
+    `;
+  const result = await pool.query(query, [username]);
   return result.rows[0];
 };
 
 const comparePassword = async (inputPassword, storedPassword) => {
-  console.log(inputPassword, storedPassword);
+  console.log(`Compared password: ${inputPassword}, ${storedPassword}`);
   return bcrypt.compare(inputPassword, storedPassword);
 };
 

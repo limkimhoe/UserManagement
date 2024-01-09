@@ -7,14 +7,17 @@ const authRoutes = require('./routes/authRoutes');
 const roleRoutes = require('./routes/roleRoutes');
 const mainRoutes = require('./routes/mainRoutes');
 
+const cookieParser = require('cookie-parser');
+
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 // Enable CORS for all routes
 app.use(cors());
 
 // Serve static files from the 'views' directory
-app.use(express.static(path.join(__dirname, '..', 'views')));
+app.use(express.static(path.join(__dirname, 'views')));
 
 // Define the route for users
 app.use('/api/users', userRoutes);
